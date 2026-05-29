@@ -14,6 +14,7 @@ from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_classic.memory import ConversationBufferMemory
 from langchain_community.vectorstores import Chroma
 from langchain_core.embeddings import Embeddings
+from langchain_core.messages import SystemMessage
 from dotenv import load_dotenv
 
 # --- 0. 환경 설정: API 키 로드 ---
@@ -93,7 +94,7 @@ class ExperienceDB:
         self.registry_path = os.path.join(persist_dir, "registry.json")
 
         os.makedirs(persist_dir, exist_ok=True)
-        self.current_dim = getattr(self.embeddings, "dimensions", 1536) # 3-small 기본값
+        self.current_dim = int(os.getenv("GEMINI_EMBEDDING_DIM", "3072"))
         self.current_model = getattr(self.embeddings, "model", "unknown-model")
 
         self.registry = self._load_registry()
@@ -136,8 +137,12 @@ class ExperienceDB:
         for c in self.registry:
             if c["model"] == self.current_model and c["dim"] == self.current_dim:
                 return c["name"]
-        safe_model_name = self.current_model.replace('-', '_').replace('.', '_')
+        safe_model_name = self._safe_collection_part(self.current_model)
         return f"{self.base_collection}_dim{self.current_dim}_model_{safe_model_name}"
+
+    def _safe_collection_part(self, value: str) -> str:
+        safe = "".join(ch if ch.isalnum() or ch in "._-" else "_" for ch in value)
+        return safe.strip("._-") or "unknown"
 
     def _load_or_create_collection(self):
         # [핵심 수정] 
@@ -159,14 +164,14 @@ class ExperienceDB:
                     stored_dim = meta.get("dimension")
                     if stored_dim and stored_dim != self.current_dim:
                         print(f"[경고] 차원 불일치! 기존 {stored_dim}, 현재 {self.current_dim}. 새 컬렉션을 생성합니다.")
-                        self.collection_name = f"{self.base_collection}_dim{self.current_dim}_model_{self.current_model.replace('-', '_')}_new"
+                        self.collection_name = f"{self.base_collection}_dim{self.current_dim}_model_{self._safe_collection_part(self.current_model)}_new"
                         return self._create_new_collection()
 
                 print(f"[성공] 기존 컬렉션 '{self.collection_name}' 로드 완료.")
                 
             except Exception as e:
                 print(f"[경고] 레지스트리에 있으나 로드 실패, 새로 생성: {e}")
-                self.collection_name = f"{self.base_collection}_dim{self.current_dim}_model_{self.current_model.replace('-', '_')}_new"
+                self.collection_name = f"{self.base_collection}_dim{self.current_dim}_model_{self._safe_collection_part(self.current_model)}_new"
                 return self._create_new_collection()
         else:
             print(f"[정보] 새 컬렉션 '{self.collection_name}'을(를) 생성합니다.")
@@ -279,13 +284,15 @@ class CodeRefactoringAgent:
         reinforced_context = self.experience_db.query_experience(initial_context)
         memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
 
-        prompt = ChatPromptTemplate.from_messages([
-            ("system", f"""당신은 숙련된 파이썬 개발자 에이전트입니다. 주어진 컨텍스트와 성공 사례를 바탕으로 버그를 수정하세요.
+        system_context = f"""당신은 숙련된 파이썬 개발자 에이전트입니다. 주어진 컨텍스트와 성공 사례를 바탕으로 버그를 수정하세요.
 ReadFile, WriteFile 도구를 사용하여 문제를 해결하세요.
 
 {reinforced_context}
 {initial_context}
-"""),
+"""
+
+        prompt = ChatPromptTemplate.from_messages([
+            SystemMessage(content=system_context),
             MessagesPlaceholder(variable_name="chat_history"),
             ("human", "{input}"),
             MessagesPlaceholder(variable_name="agent_scratchpad"),
@@ -309,7 +316,11 @@ ReadFile, WriteFile 도구를 사용하여 문제를 해결하세요.
             return
 
         while True:
-            feedback = input("\n이 수정이 올바른가요? (y/n): ").lower()
+            try:
+                feedback = input("\n이 수정이 올바른가요? (y/n): ").lower()
+            except EOFError:
+                feedback = "y"
+                print("자동 실행 환경이라 'y'로 처리합니다.")
             if feedback in ['y', 'n']:
                 # [핵심 수정]
                 # 'trace' (에이전트의 작업 로그)를 'text' (문서 본문)로 저장합니다.

@@ -16,3 +16,11 @@ Future textbook practices should be added as numbered folders, for example:
 - Default paid API path: Gemini API via `GOOGLE_API_KEY`
 - Local no-cost smoke path: Ollama via `gemma3n:e4b`
 - OpenAI API keys are not required for the updated 21번 교재 examples.
+
+## 21번 교재 Status
+
+- Folder: `21_context_engineering_ai_agent/`
+- Verification date: 2026-05-29
+- Full harness: `../contextengineeringbook/.venv/bin/python run_all_examples.py`
+- Result: `ALL_EXAMPLES_PASSED`
+- Real API path verified with Gemini chat and `models/gemini-embedding-2` embeddings.

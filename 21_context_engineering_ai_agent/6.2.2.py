@@ -19,7 +19,7 @@ os.environ["GOOGLE_API_KEY"] = os.getenv("GOOGLE_API_KEY", "YOUR_GEMINI_API_KEY"
 
 # --- 1. LLM(두뇌) 정의 ---
 # 학생의 복잡한 학습 이력과 규칙을 정확히 따르도록 Gemini 모델을 사용합니다.
-llm = get_gemini_chat_model(temperature=0.1)
+llm = get_gemini_chat_model(temperature=0.1, max_output_tokens=900)
 # CLAUDE: llm = ChatAnthropic(model="claude-sonnet-4-5-20250929", temperature=0.3)
 # GEMINI: llm = ChatGoogleGenerativeAI(model="gemini-3.0", temperature=0.3)
 

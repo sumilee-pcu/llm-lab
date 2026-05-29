@@ -1,4 +1,5 @@
 from langchain_classic.agents import tool
+from pathlib import Path
 
 @tool
 def read_file(file_path: str) -> str:
@@ -13,6 +14,7 @@ def read_file(file_path: str) -> str:
 def write_file(file_path: str, content: str) -> str:
     """파일에 새로운 내용을 쓰거나 수정할 때 사용합니다. 인자로는 파일 경로(문자열)와 새로운 내용(문자열)을 받습니다."""
     try:
+        Path(file_path).parent.mkdir(parents=True, exist_ok=True)
         with open(file_path, 'w', encoding='utf-8') as f:
             f.write(content)
         return f"'{file_path}' 파일이 성공적으로 수정되었습니다."

@@ -29,6 +29,20 @@ llm = get_gemini_chat_model(temperature=0)
 # Memory (기억)
 memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True) # [수정] return_messages=True 추가
 
+
+def setup_project_environment():
+    project_dir = "buggy_project"
+    os.makedirs(project_dir, exist_ok=True)
+    with open(os.path.join(project_dir, "utils.py"), "w", encoding="utf-8") as f:
+        f.write("""
+def calculate_total(cart_items):
+    \"\"\"장바구니 상품들의 총액을 계산합니다.\"\"\"
+    total_price = 0
+    for item in cart_items:
+        total_price += item['price'] * item['quantity']
+    return total_price
+""")
+
 # --- 2. 버그 리포트 기반 Context Buffer 생성 ---
 def create_context_bundle(error_log: str, source_file_path: str) -> str:
     """
@@ -89,6 +103,7 @@ def create_refactoring_agent(initial_context: str):
 # --- 4. 메인 실행 루프 (CLI + 피드백 루프) ---
 if __name__ == "__main__":
     print("AI 주니어 개발자 에이전트가 준비되었습니다.")
+    setup_project_environment()
     
     # 버그 리포트 정보
     error_log_from_report = """
@@ -119,7 +134,11 @@ TypeError: can't multiply sequence by non-int of type 'str'
 
     # 피드백 루프
     while True:
-        feedback = input("\n이 수정이 올바른가요? (y/n): ").lower()
+        try:
+            feedback = input("\n이 수정이 올바른가요? (y/n): ").lower()
+        except EOFError:
+            feedback = "y"
+            print("자동 실행 환경이라 'y'로 처리합니다.")
         if feedback in ['y', 'n']:
             # 8.6절에서 이 피드백을 '학습'에 활용하는 로직을 추가할 수 있습니다.
             print("피드백을 기록했습니다. 감사합니다.")

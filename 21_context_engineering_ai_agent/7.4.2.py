@@ -18,6 +18,7 @@ class ContextAgent:
 
     def decide(self, message: str) -> str:
         """2. 판단: 메시지의 의도를 분류한다."""
+        message_lower = message.lower()
         if "일정" in message_lower or "약속" in message_lower:
             return "add_schedule" # 의도: 일정 추가
         elif "종료" in message_lower:

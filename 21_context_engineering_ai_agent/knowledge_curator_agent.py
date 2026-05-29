@@ -170,6 +170,10 @@ if __name__ == "__main__":
     # 1. 프로그램 시작 시 즉시 1회 실행
     run_knowledge_curation_task(research_topic)
 
+    if os.getenv("RUN_CONTINUOUS_SCHEDULER") != "1":
+        print("\n--- 1회 실행 모드로 종료합니다. 반복 실행은 RUN_CONTINUOUS_SCHEDULER=1 설정 후 사용하세요. ---")
+        raise SystemExit(0)
+
     # 2. 스케줄러 설정 및 시작
     scheduler = BlockingScheduler()
     scheduler.add_job(run_knowledge_curation_task, 'interval', minutes=10, args=[research_topic])
