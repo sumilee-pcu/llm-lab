@@ -69,6 +69,26 @@ python 03_classification_finetune.py   # 어느 OS든 동일 명령
 | trl import | DPO/SFT 안정 + PPO experimental 경로 확인 |
 | diffusers import | 0.37.1, AutoPipelineForText2Image 확인 |
 
+### 🔁 독립 재검증 (2026-05-30, 동일 Apple M5 Max / 128GB · 클린 venv 재설치 후)
+
+클린 가상환경에 최신 버전을 새로 설치하고 6개 토픽을 전수 재실행해 위 결과를 독립 재현했습니다.
+
+설치 버전(핀 확인): `transformers 5.9.0` · `trl 1.5.1` · `peft 0.19.1` · `mlx 0.31.2` · `mlx-lm 0.31.3` · `torch 2.12.0` · `datasets 4.8.5` · `diffusers 0.38.0`
+
+| 파일 | 백엔드 | 재검증 결과 (원검증 대비) |
+|------|--------|--------------------------|
+| 01 LoRA | MLX | val loss 4.509 → 0.831, 어댑터 저장 — **동일** |
+| 02 양자화 | MLX | 4.502 bits/weight, 276MB — **동일** |
+| 03 분류 | torch/mps | acc 0.67, "this is really good"→긍정 — **동일** |
+| 04 증류 | torch/mps | KL train_loss 0.30 (v5 `num_items_in_batch` 정상) — **동일** |
+| 06 DPO | trl 1.5.1/mps | rewards/chosen 1.005 > rejected −0.267, acc 1.0 — **동일** |
+| 05 디퓨전 | diffusers 0.38.0 | `AutoPipelineForText2Image` import·디바이스 분기(mps/fp16) OK — API 검증 |
+| 벤치(mps,cpu×3) | torch | mps 3.13±0.17s/0.556, cpu 2.27±0.02s/0.333 → `results_bench.tsv` 재생성 |
+
+> 📌 **흥미로운 실측 포인트**: 데이터가 초소형이면 **cpu가 mps보다 빠름**(mps 커널 런치 오버헤드 > 연산량). mps/GPU 우위는 모델·배치가 커질 때 발현 → 강의에서 "GPU가 항상 빠른 건 아니다"를 보여주는 좋은 실측 사례.
+>
+> ⚠️ Windows/CUDA 경로(`bitsandbytes` 4bit·`cuda` 디바이스)는 본 검증 환경(macOS)에서 **실행 불가** → 코드는 최신 API 팩트체크로 정합성만 확인. 실제 CUDA 실행은 Windows/Colab에서 검증 필요.
+
 ## 강의 운영 팁
 
 - **강사 라이브 데모**: M-시리즈 맥 → MLX/mps로 빠른 실제 학습 시연.

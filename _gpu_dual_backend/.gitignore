@@ -1,0 +1,13 @@
+# 가상환경 / 모델 / 학습 산출물 (커밋 금지 — 용량 큼, 재생성 가능)
+.venv-mac/
+.venv/
+adapters_mlx/
+adapters_torch/
+qmodel_mlx/
+clf_out/
+distill_out/
+dpo_out/
+bench/_bench_tmp/
+diffusion_out.png
+__pycache__/
+*.pyc
