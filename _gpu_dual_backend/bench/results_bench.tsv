@@ -1,0 +1,3 @@
+device	repeats	train_sec_mean	train_sec_std	throughput_mean	throughput_std	peak_mem_mb	eval_acc_mean	eval_acc_std
+mps	3	3.121	0.158	23.12	1.13	1350.9	0.556	0.314
+cpu	3	2.283	0.012	31.53	0.17		0.333	0.272

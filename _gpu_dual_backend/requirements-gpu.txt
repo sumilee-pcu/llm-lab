@@ -1,0 +1,29 @@
+# GPU 구간 듀얼 백엔드 의존성 (Windows · macOS 공용)
+# 2026-05 팩트체크 기준. environment marker로 환경별 자동 설치.
+#
+# ⚠️ transformers v5는 주간 릴리스마다 breaking change가 잦음 → 강의 전 버전 핀 권장
+#    (예: pip install "transformers==5.9.0" 처럼 정확히 고정)
+
+# ── [공통] 모델/데이터 ─────────────────────────────
+transformers>=5.0,<6.0      # v5.0(2026-01): eval_strategy/report_to/use_cpu, PyTorch 전용
+datasets>=3.0
+accelerate>=1.0             # transformers v5 Trainer 필수
+sentencepiece>=0.2.0        # 일부 토크나이저 변환용
+tiktoken>=0.7.0
+
+# ── [Apple Silicon 전용] MLX 백엔드 (Mac arm64) ────
+mlx>=0.30.0 ; sys_platform == "darwin" and platform_machine == "arm64"
+mlx-lm>=0.20.0 ; sys_platform == "darwin" and platform_machine == "arm64"
+# mlx-vlm>=0.1.0 ; sys_platform == "darwin" and platform_machine == "arm64"   # VQA용(선택)
+
+# ── [공통] torch 백엔드 (Windows=cuda/cpu, macOS=mps) ─
+# torch v5 호환 최소 2.4+. macOS는 mps 자동 지원, Windows는 CUDA 빌드 권장.
+torch>=2.4
+peft>=0.18.0               # transformers v5 호환에 0.18+ 필요
+trl>=1.0                   # v1.0(2026-03): DPO/SFT 안정, PPO는 trl.experimental.ppo
+diffusers>=0.33            # 스테이블 디퓨전(24번) — cuda/mps/cpu 공용
+
+# ── [선택] Colab GPU 전용 4bit 양자화 (CUDA) ────────
+# bitsandbytes>=0.43.0 ; platform_machine == "x86_64"
+#   ※ 멀티백엔드(CPU/Windows)는 2026-05 기준 alpha → 4bit는 Colab(CUDA) 권장,
+#     Windows CPU에서는 02_quantize.py의 동적양자화 fallback 사용
