@@ -8,7 +8,7 @@ load_dotenv()
 
 DEFAULT_GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
 DEFAULT_GEMINI_EMBEDDING_MODEL = os.getenv(
-    "GEMINI_EMBEDDING_MODEL", "models/embedding-001"
+    "GEMINI_EMBEDDING_MODEL", "models/gemini-embedding-2"
 )
 
 

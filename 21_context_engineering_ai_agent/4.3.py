@@ -28,7 +28,7 @@ embeddings = get_gemini_embeddings()
 # CLAUDE: llm = ChatAnthropic(model="claude-sonnet-4-5-20250929", temperature=0.1)
 # CLAUDE: embeddings = AnthropicEmbeddings()
 # GEMINI: llm = ChatGoogleGenerativeAI(model="gemini-3.0", temperature=0.1)
-# GEMINI: embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
+# GEMINI: embeddings = GoogleGenerativeAIEmbeddings(model="models/gemini-embedding-2")
 
 
 def get_ai_response(prompt: str) -> str:

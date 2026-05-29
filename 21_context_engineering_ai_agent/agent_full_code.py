@@ -248,7 +248,7 @@ class CodeRefactoringAgent:
         # CLAUDE: self.llm = ChatAnthropic(...)
         # CLAUDE: self.embeddings = AnthropicEmbeddings()
         # GEMINI: self.llm = ChatGoogleGenerativeAI(...)
-        # GEMINI: self.embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
+        # GEMINI: self.embeddings = GoogleGenerativeAIEmbeddings(model="models/gemini-embedding-2")
         
         self.experience_db = ExperienceDB(persist_dir="experience_db", embeddings=self.embeddings)
         print("--- 4. AI 주니어 개발자 에이전트 초기화 완료 ---\n")

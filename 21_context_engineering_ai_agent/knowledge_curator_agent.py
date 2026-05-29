@@ -36,7 +36,7 @@ llm = get_gemini_chat_model(temperature=0)
 
 embeddings = get_gemini_embeddings()
 # CLAUDE: embeddings = AnthropicEmbeddings()
-# GEMINI: embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
+# GEMINI: embeddings = GoogleGenerativeAIEmbeddings(model="models/gemini-embedding-2")
 
 print("--- 1. 지식 베이스 초기화 중... ---")
 vector_db = Chroma(

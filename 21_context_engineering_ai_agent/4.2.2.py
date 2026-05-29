@@ -66,7 +66,7 @@ embeddings = get_gemini_embeddings()
 # CLAUDE: Anthropic 임베딩 모델로 변경합니다.
 # CLAUDE: embeddings = AnthropicEmbeddings()
 # GEMINI: Google 임베딩 모델로 변경합니다. (모델명 지정 필수)
-# GEMINI: embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
+# GEMINI: embeddings = GoogleGenerativeAIEmbeddings(model="models/gemini-embedding-2")
 
 
 vector_db = FAISS.from_documents(split_docs, embeddings)

@@ -59,7 +59,7 @@ embeddings = get_gemini_embeddings()
 # CLAUDE: Anthropic 임베딩 모델로 변경합니다.
 # CLAUDE: embeddings = AnthropicEmbeddings()
 # GEMINI: Google 임베딩 모델로 변경합니다. (모델명 지정 필수)
-# GEMINI: embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
+# GEMINI: embeddings = GoogleGenerativeAIEmbeddings(model="models/gemini-embedding-2")
 
 # FAISS를 사용하여 인메모리 벡터 DB를 생성합니다.
 # (이 부분은 어떤 임베딩 모델을 쓰든 동일하게 작동합니다.)
