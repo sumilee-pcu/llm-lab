@@ -1,0 +1,11 @@
+.DS_Store
+.uv-cache/
+.venv/
+__pycache__/
+*.pyc
+.env
+contextengineeringbook/
+experience_db/
+experience_db_v2/
+medical_knowledge_db/
+buggy_project/
